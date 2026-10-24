@@ -1,0 +1,99 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      ANDROIDSDK: /home/runner/android-sdk
+      ANDROIDNDK: /home/runner/android-sdk/ndk/25.2.9519653
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up host Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache Android SDK and p4a build files
+        uses: actions/cache@v4
+        with:
+          path: |
+            /home/runner/android-sdk
+            /home/runner/.p4a
+          key: p4a-armv7-android34-ndk25b-${{ runner.os }}
+
+      - name: Install Android SDK and NDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            autoconf automake build-essential cmake git libffi-dev libltdl-dev \
+            libncurses5-dev libncursesw5-dev libssl-dev libtinfo6 libtool \
+            nasm pkg-config unzip zlib1g-dev
+
+          mkdir -p "$ANDROIDSDK/cmdline-tools"
+          if [[ ! -x "$ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager" ]]; then
+            curl -fsSL \
+              https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
+              -o "$RUNNER_TEMP/android-command-line-tools.zip"
+            mkdir -p "$RUNNER_TEMP/android-command-line-tools"
+            unzip -q "$RUNNER_TEMP/android-command-line-tools.zip" -d "$RUNNER_TEMP/android-command-line-tools"
+            rm -rf "$ANDROIDSDK/cmdline-tools/latest"
+            mv "$RUNNER_TEMP/android-command-line-tools/cmdline-tools" "$ANDROIDSDK/cmdline-tools/latest"
+          fi
+
+          echo "$ANDROIDSDK/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "$ANDROIDSDK/platform-tools" >> "$GITHUB_PATH"
+          yes | "$ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROIDSDK" --licenses >/dev/null || true
+          "$ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROIDSDK" \
+            "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;25.2.9519653"
+
+      - name: Install python-for-android
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install 'Cython==0.29.36' 'python-for-android==2024.1.21'
+
+      - name: Build 32-bit ARM APK with python-for-android
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/stillframe-private" "$HOME/.p4a"
+          cp main.py "$RUNNER_TEMP/stillframe-private/main.py"
+          p4a apk \
+            --private "$RUNNER_TEMP/stillframe-private" \
+            --package org.stillframe.stillframe \
+            --name Stillframe \
+            --version 0.1.0 \
+            --bootstrap sdl2 \
+            --requirements 'python3==3.11.5,kivy,ffpyplayer' \
+            --arch armeabi-v7a \
+            --android-api 34 \
+            --ndk-api 23 \
+            --sdk-dir "$ANDROIDSDK" \
+            --ndk-dir "$ANDROIDNDK" \
+            --storage-dir "$HOME/.p4a" \
+            --orientation landscape \
+            --permission READ_EXTERNAL_STORAGE \
+            --permission READ_MEDIA_VIDEO
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: '**/*.apk'
+          if-no-files-found: error
+          retention-days: 14
