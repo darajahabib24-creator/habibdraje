@@ -52,7 +52,7 @@ requirements = kivy, android
 #icon.filename = %(source.dir)s/data/icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
-orientation = portrait
+orientation = portrait,all
 
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
@@ -68,7 +68,7 @@ orientation = portrait
 osx.python_version = 3
 
 # Kivy version to use
-# osx.kivy_version = 1.9.1
+# osx.kivy_version = 2.3.0,<3.0
 
 #
 # Android specific
@@ -154,7 +154,7 @@ android.manifest.launch_mode = standard
 
 # (list) Android additionnal libraries to copy into libs/armeabi
 #android.add_libs_armeabi = libs/android/*.so
-#android.add_libs_armeabi_v7a = libs/android-v7/*.so
+android.add_libs_armeabi_v7a = libs/android-v7/*.so
 #android.add_libs_x86 = libs/android-x86/*.so
 #android.add_libs_mips = libs/android-mips/*.so
 
@@ -185,7 +185,7 @@ android.accept_sdk_license = True
 #
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-#p4a.source_dir =
+p4a.source_dir = .
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
 #p4a.local_recipes =
@@ -194,7 +194,7 @@ android.accept_sdk_license = True
 #p4a.hook =
 
 # (str) Bootstrap to use for android builds
-# p4a.bootstrap = sdl2
+p4a.bootstrap = sdl2
 
 
 #
