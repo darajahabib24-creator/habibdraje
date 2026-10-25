@@ -51,8 +51,9 @@ jobs:
 
           mkdir -p "$ANDROIDSDK/cmdline-tools"
           if [[ ! -x "$ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager" ]]; then
+            # FIXED: Updated URL to use the correct verified 15859902 release string
             curl -fsSL \
-              https://google.com \
+              https://dl.google.com/android/repository/commandlinetools-linux-15859902_latest.zip \
               -o "$RUNNER_TEMP/android-command-line-tools.zip"
             mkdir -p "$RUNNER_TEMP/android-command-line-tools"
             unzip -q "$RUNNER_TEMP/android-command-line-tools.zip" -d "$RUNNER_TEMP/android-command-line-tools"
@@ -77,10 +78,8 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/launcher-private" "$HOME/.p4a"
           
-          # 1. Attach your main execution file from repository root
+          # Copy your repository codebase into the package workspace staging area
           cp main.py "$RUNNER_TEMP/launcher-private/main.py"
-          
-          # 2. Attach your target system folders safely into the staging area
           cp -r launcher "$RUNNER_TEMP/launcher-private/"
           cp -r art "$RUNNER_TEMP/launcher-private/"
           cp -r data "$RUNNER_TEMP/launcher-private/"
@@ -113,4 +112,3 @@ jobs:
           path: '**/*.apk'
           if-no-files-found: error
           retention-days: 14
-          
