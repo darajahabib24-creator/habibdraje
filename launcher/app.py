@@ -53,7 +53,7 @@ class Launcher(App):
             self.log(f'found entry {entry}')
             data.append({
                 "data_title": entry.get("title", "- no title -"),
-                "data_path": entry.get("path"),
+                "data_path": entry.get("paths"),
                 "data_logo": entry.get("logo", "data/logo/kivy-icon-64.png"),
                 "data_orientation": entry.get("orientation", ""),
                 "data_author": entry.get("author", ""),
@@ -73,7 +73,7 @@ class Launcher(App):
                 self.log(f'{path} does not exist')
                 return
 
-            self.log('{os.listdir(path)}')
+            self.log('{os.listdir(paths)}')
             for filename in glob("{}/*/android.txt".format(path)):
                 self.log(f'{filename} exist')
                 entry = self.read_entry(filename)
