@@ -37,7 +37,8 @@ jobs:
           path: |
             /home/runner/android-sdk
             /home/runner/.p4a
-          key: p4a-armv7-android33-ndk25b-${{ runner.os }}
+          key: p4a-armv7-android33-ndk25b-${{ runner.os }}-${{ hashFiles('buildozer.spec') }} # Replace with your path
+
 
       - name: Install Android SDK and NDK Dependencies
         shell: bash
