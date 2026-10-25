@@ -98,12 +98,15 @@ jobs:
             --sdk-dir "$ANDROIDSDK" \
             --ndk-dir "$ANDROIDNDK" \
             --storage-dir "$HOME/.p4a" \
+            --orientation all \
             --orientation portrait \
             --permission INTERNET \
-            --permission READ_EXTERNAL_STORAGE \
-            --permission WRITE_EXTERNAL_STORAGE \
             --permission ACCESS_NETWORK_STATE \
-            --permission WAKE_LOCK
+            --permission WAKE_LOCK \
+            --permission MANAGE_EXTERNAL_STORAGE \
+            --permission READ_MEDIA_IMAGES \
+            --permission READ_MEDIA_VIDEO
+            
 
       - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
