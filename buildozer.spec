@@ -30,6 +30,16 @@ orientation = portrait
 # (bool) Indicate if the application should be fullscreen or not
 fullscreen = 0
 
+# (str) Source code where the main.py lives (points to your repository root)
+source.dir = .
+
+# (list) Source files to include (Leave blank to dynamically package all file paths)
+source.include_exts = py,png,jpg,kv,atlas,ttf,txt
+
+# (list) List of directories to exclude (CRUCIAL: Make sure launcher, art, and data are NOT here)
+source.exclude_dirs = tests, bin, .buildozer, .git
+
+
 # =============================================================================
 # Android specific
 # =============================================================================
