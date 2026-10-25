@@ -98,7 +98,6 @@ jobs:
             --sdk-dir "$ANDROIDSDK" \
             --ndk-dir "$ANDROIDNDK" \
             --storage-dir "$HOME/.p4a" \
-            --orientation all \
             --orientation portrait \
             --permission INTERNET \
             --permission ACCESS_NETWORK_STATE \
