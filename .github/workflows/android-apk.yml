@@ -92,7 +92,6 @@ jobs:
             --bootstrap sdl2 \
             --requirements 'python3,kivy,android' \
             --arch armeabi-v7a \
-            --arch arm64-v8a \
             --android-api 33 \
             --ndk-api 21 \
             --sdk-dir "$ANDROIDSDK" \
@@ -104,7 +103,8 @@ jobs:
             --permission WAKE_LOCK \
             --permission MANAGE_EXTERNAL_STORAGE \
             --permission READ_MEDIA_IMAGES \
-            --permission READ_MEDIA_VIDEO
+            --permission READ_MEDIA_VIDEO \
+            --permission POST_NOTIFICATIONS \
             
 
       - name: Upload APK Artifacts
